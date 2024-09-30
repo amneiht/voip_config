@@ -1,0 +1,56 @@
+services:
+  mysql:
+    image: mariadb:10.5
+    restart: always
+    # dam bao server luon san sang
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    volumes:
+      - ./mysql:/var/lib/mysql
+    environment:
+      - MARIADB_ROOT_PASSWORD=${DBPASS}
+    ports:
+      - ${SQL_PORT}:3306
+  amsip:
+    image: kamser:v0.2
+    container_name: "sip"
+    volumes:
+      - ./init:/tmp/backup:ro
+      - ./cfg:/usr/local/etc/kamailio
+    depends_on:
+    #chi chay khi mariadb da san sang
+      mysql:
+        condition: service_healthy
+    restart: always
+    network_mode: "host"
+    # ports:
+    #   - ${SIPS_PORT}:${SIPS_PORT}
+    #   - ${SIP_PORT}:${SIP_PORT}
+    #   - ${MIN_PORT}-${MAX_PORT}:${MIN_PORT}-${MAX_PORT}/udp
+    environment:
+      - IP_ADDRESS=${IP_ADDRESS}
+      - SIP_PORT=${SIP_PORT}
+      - SIPS_PORT=${SIPS_PORT}
+      - ENABLE_NAT=${ENABLE_NAT}
+      - ENABLE_AUTH=${ENABLE_AUTH}
+      - MIN_PORT=${MIN_PORT}
+      - MAX_PORT=${MAX_PORT}
+      - SQL_PORT=${SQL_PORT}
+      - DBPASS=${DBPASS}
+      - RTP_ADDRESS=${RTP_ADDRESS}
+    command: bash /tmp/backup/kamailio.sh 
+  asterisk:
+    image: thoai:v2
+    container_name: "iax"
+    restart: always
+    volumes:
+      - ./asterisk:/tmp/config
+      - ./init/asterisk.sh:/tmp/asterisk.sh
+    ports:
+      - ${IAX2_PORT}:4569/udp
+    # repleace to new config
+    command: bash /tmp/asterisk.sh
