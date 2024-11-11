@@ -1,37 +1,37 @@
 #!/bin/bash
 #amneiht: setting enviromen
 # -----------check enviroment
-if [ -z ${MAX_PORT+x} ]
+if [ -z ${MAX_PORT} ]
 then
 	echo " set max port"
 	MAX_PORT=10900
 fi
 
-if [ -z ${MIN_PORT+x} ]
+if [ -z ${MIN_PORT} ]
 then
 	echo " set min port"
 	MIN_PORT=10000
 fi
 
-if [ -z ${IP_ADDRESS+x} ]
+if [ -z ${IP_ADDRESS} ]
 then
 	echo "set ip addr"
 	IP_ADDRESS="192.168.1.210"
 fi
 
-if [ -z ${SIP_PORT+x} ]
+if [ -z ${SIP_PORT} ]
 then
 	SIP_PORT=5060
 fi
-if [ -z ${SIPS_PORT+x} ]
+if [ -z ${SIPS_PORT} ]
 then
 	SIPS_PORT=5061
 fi
-if [ -z ${SQL_PORT+x} ]
+if [ -z ${SQL_PORT} ]
 then
 	SQL_PORT=3306
 fi
-if [ -z ${RTP_ADDRESS+x} ]
+if [ -z ${RTP_ADDRESS} ]
 then
 	RTP_ADDRESS=${IP_ADDRESS}
 fi
@@ -113,9 +113,26 @@ kamstart()
 	kamctl stop
 	rm -rf /var/run/kamailio/*
 	kamctl start
+	# loopback for run kamailio
+	if [ ! -f  /var/run/kamailio/kamailio.pid ]
+	then
+		sleep 5
+		kamctl start
+	fi
+}
+create_database()
+{
+	if [ ! -f /usr/local/etc/kamailio/.initdb ]
+	then
+		kamdbctl create
+		touch /usr/local/etc/kamailio/.initdb
+	fi
 }
 create_config
 rtpstart
+# wait for mysql ready
+sleep 10
+create_database
 kamstart
 
 

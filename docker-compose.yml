@@ -15,6 +15,18 @@ services:
       - MARIADB_ROOT_PASSWORD=${DBPASS}
     ports:
       - ${SQL_PORT}:3306
+  asterisk:
+    image: thoai:v2
+    container_name: "iax"
+    restart: always
+    volumes:
+      - ./asterisk:/tmp/config
+      - ./init/asterisk.sh:/tmp/asterisk.sh
+    ports:
+      - ${IAX2_PORT}:4569/udp
+    # repleace to new config
+    command: bash /tmp/asterisk.sh
+    
   amsip:
     image: kamser:v0.2
     container_name: "sip"
@@ -43,14 +55,3 @@ services:
       - DBPASS=${DBPASS}
       - RTP_ADDRESS=${RTP_ADDRESS}
     command: bash /tmp/backup/kamailio.sh 
-  asterisk:
-    image: thoai:v2
-    container_name: "iax"
-    restart: always
-    volumes:
-      - ./asterisk:/tmp/config
-      - ./init/asterisk.sh:/tmp/asterisk.sh
-    ports:
-      - ${IAX2_PORT}:4569/udp
-    # repleace to new config
-    command: bash /tmp/asterisk.sh
