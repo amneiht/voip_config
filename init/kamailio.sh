@@ -71,13 +71,9 @@ create_config()
 #!define WITH_TLS
 #!define RTP_ADDRESS "${RTP_ADDRESS}"
 #!define WITH_MYSQL
+#!define WITH_NAT
 #!trydef DBURL "mysql://kamailio:kamailiorw@127.0.0.1:${SQL_PORT}/kamailio"
 EOF
-
-	if [  "x$ENABLE_NAT" = "xtrue" ]
-	then
-		echo "#!define WITH_NAT" >> ${LFILE}
-	fi
 	if [  "x$ENABLE_AUTH" = "xtrue" ]
 	then
 		cat << EOF >> ${LFILE}

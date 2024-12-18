@@ -30,4 +30,9 @@ kamdbctl create
 kamctl start
 ```
 # Lưu ý
-Đây chỉ là cấu hình trong môi tường thử nhiệm , với mục địch tạo điều kiện chạy 1 hệ thống voip nhanh nhất có thể. Với tình hình triến khai phức tạp cần tìm hiểu sau để cấu hình câc tính năn nâng cao
+Đây chỉ là cấu hình trong môi tường thử nhiệm , với mục địch tạo điều kiện chạy 1 hệ thống voip nhanh nhất có thể. Với tình hình triến khai phức tạp cần tìm hiểu sau để cấu hình câc tính năn9 nâng cao
+
+
+# Change log
+
+- 18-12-2021 : add with_nat to default config
